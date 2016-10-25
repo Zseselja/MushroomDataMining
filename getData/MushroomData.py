@@ -109,23 +109,43 @@ class MushroomData:
     def __init__(self, data_file='./MushDataSet.cvs'):
         assert(os.path.exists(data_file))
         self.data_file = data_file
+        self.y = []
+        self.X = []
+
+    #Given a list of classes (y) and associated attributes (X)
+    #   return randomly sampled test and training datasets
+    @staticmethod
+    def _get_samples(y,X):
+        #pair ys and Xs to preserve matching
+        d = zip(y,X)
+        #shuffle to get a random sample
+        np.random.shuffle(d)
+        t_count = len(d)/10
+
+        #split and transpose into y_test and X_test
+        test = zip(*d[:t_count])
+
+        #split and transpose into y_train and X_train
+        train = zip(*d[t_count:])
+
+        return test[0],test[1],train[0],train[1]
 
     #Get the datasets from the csv file
     #   returns list of classes y, and attribute matrix X
     def get_datasets(self, eliminate_missing=True):
         #open and read the data file
-        y = []
-        X = []
+        self.y = []
+        self.X = []
         with open(self.data_file) as f:
             for line in f:
                 m = line.strip().split(',')
                 #first column is the classes: poisonous or edible
-                y.append(self._class_dict[m[0]])
+                self.y.append(self._class_dict[m[0]])
                 #other columns are the attributes
                 if m[11] is not '?':
                     #only attr 11 "stalk-root" can be unknown, handle it separately
                     x_i = [self._dict_seq[i-1][m[i]] for i in range(1,len(m))]
-                    X.append(x_i)
+                    self.X.append(x_i)
                 elif eliminate_missing is True:
                     #attribute 11 is missing eliminate this object
                     pass
@@ -135,9 +155,9 @@ class MushroomData:
                         x_i = [self._dict_seq[i-1][m[i]] 
                                 if i is not 11 else val
                                 for i in range(1,len(m))]
-                        X.append(x_i)
-         
-        return y,X
+                        self.X.append(x_i)
+                        self.y.append(m[0])
+        return self._get_samples(self.y,self.X)
 
 
 
@@ -145,8 +165,13 @@ if __name__ == "__main__":
     print("testing data class")
     
     data = MushroomData()
+    y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
+    assert(len(y_test) + len(y_train) == len(X_test) + len(X_train))
+    assert(len(y_test) + len(y_train) == (8124 - 2480))
+    print('Eliminate missing True OK')
 
-    y, X = data.get_datasets()
-
-    print(y[0])
-    print(X[0])
+    data = MushroomData()
+    y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False)
+    assert(len(y_test) + len(y_train) == len(X_test) + len(X_train))
+    assert(len(y_test) + len(y_train) == (8124 + 5*2480))
+    print('Eliminate missing False OK')
