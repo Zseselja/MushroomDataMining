@@ -140,7 +140,8 @@ class MushroomData:
             for line in f:
                 m = line.strip().split(',')
                 #first column is the classes: poisonous or edible
-                self.y.append(self._class_dict[m[0]])
+                y_ans = self._class_dict[m[0]]
+                self.y.append(y_ans)
                 #other columns are the attributes
                 if m[11] is not '?':
                     #only attr 11 "stalk-root" can be unknown, handle it separately
@@ -156,7 +157,7 @@ class MushroomData:
                                 if i is not 11 else val
                                 for i in range(1,len(m))]
                         self.X.append(x_i)
-                        self.y.append(m[0])
+                        self.y.append(y_ans)
         return self._get_samples(self.y,self.X)
 
 
