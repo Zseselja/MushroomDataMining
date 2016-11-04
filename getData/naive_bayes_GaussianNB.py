@@ -61,7 +61,7 @@ if __name__ == "__main__":
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False)
     
-    print('All Elements')
+    print('\nAll Elements')
 
     clf = GaussianNB()
     clf.fit(X_train,y_train)
