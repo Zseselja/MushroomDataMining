@@ -19,7 +19,9 @@ import os
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import fetch_20newsgroups
 from MushroomData import MushroomData
-
+import matplotlib.pyplot as plt
+from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+from sklearn.metrics import precision_recall_fscore_support
 
 if __name__ == "__main__":
     print("testing data class")
@@ -44,11 +46,16 @@ if __name__ == "__main__":
     
     print('missing elements')
 
-    # target = y_test.target
     clf = GaussianNB()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
+
+    y_true = np.array(y_test)
+    print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
     print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
+
 
 
     data = MushroomData()
@@ -56,9 +63,15 @@ if __name__ == "__main__":
     
     print('All Elements')
 
-    # target = y_test.target
     clf = GaussianNB()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
+
+    y_true = np.array(y_test)
+    print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
+
+    
  
     print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
