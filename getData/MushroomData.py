@@ -109,8 +109,14 @@ class MushroomData:
     def __init__(self, data_file='./MushDataSet.cvs'):
         assert(os.path.exists(data_file))
         self.data_file = data_file
+        self.class_labels = ['edible', 'poisonous']
+        self.feature_labels = ['cap_shape', 'cap-surface', 'cap-color', 'bruises', 'odor','gill-attachment', 
+                            'gill-spacing', 'gill-size','gill-color', 'stalk-shape','stalk-root', 'stalk-surface-above-ring', 
+                            'stalk-surface-below-ring', 'stalk-color-above-ring','stalk-color-below-ring', 'veil-type', 
+                            'veil-color', 'ring-number', 'ring-type', 'spore-print-color', 'population', 'habitat']
         self.y = []
         self.X = []
+
 
     #Given a list of classes (y) and associated attributes (X)
     #   return randomly sampled test and training datasets
