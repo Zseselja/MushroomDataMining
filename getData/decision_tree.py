@@ -11,24 +11,28 @@
 #
 
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn import tree
 from MushroomData import MushroomData
-import matplotlib.pyplot as plt
-
+from sklearn import metrics
 
 if __name__ == "__main__":
-    print("testing data class")
 
+    # Decision Tree: (with missing elements)
+    print('Decision Tree: (with missing elements)')
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
-    
-    print('missing elements')
-
     clf = tree.DecisionTreeClassifier(criterion='entropy')
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
-    print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
 
+    # Metrics
+    y_true = np.array(y_test)
+    print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction) == 0))
+    print
+    print(metrics.classification_report(y_true, y_prediction, target_names=data.class_labels, digits=6))
+
+    # Feature Importances 
     importances = clf.feature_importances_
     indices = np.argsort(importances)[::-1]
     plt.figure()
@@ -38,19 +42,23 @@ if __name__ == "__main__":
     plt.ylabel('Importance')
     plt.xlabel('Attribute Number')
     plt.xticks(y_pos, indices)
-    plt.show()
+    #plt.show()
 
-
+    # Decision Tree: (using all elements)
+    print('Decision Tree: (using all elements)')
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False)
-    
-    print('All Elements')
-
     clf = tree.DecisionTreeClassifier(criterion='entropy')
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
-    print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
 
+    # Metrics
+    y_true = np.array(y_test)
+    print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
+    print
+    print(metrics.classification_report(y_true, y_prediction, target_names=data.class_labels, digits=6))
+
+    # Feature Importances
     importances = clf.feature_importances_
     indices = np.argsort(importances)[::-1]
     plt.figure()
@@ -60,9 +68,9 @@ if __name__ == "__main__":
     plt.ylabel('Importance')
     plt.xlabel('Attribute Number')
     plt.xticks(y_pos, indices)
-    plt.show()
+    #plt.show()
 
-    # Element Weights:
+    # Weighted Decision Tree:
     #print('Elements weighted using priority of guidebook')
 
     # Four attributes were of extra importance when used for classification purposes.
