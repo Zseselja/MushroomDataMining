@@ -16,29 +16,16 @@
 import numpy as np
 import sys
 import os
-from sklearn.naive_bayes import GaussianNB
+from sklearn import svm
 from sklearn.datasets import fetch_20newsgroups
 from MushroomData import MushroomData
-import matplotlib.pyplot as plt
-from sklearn.calibration import CalibratedClassifierCV, calibration_curve
 from sklearn.metrics import precision_recall_fscore_support
+
+
 
 if __name__ == "__main__":
     print("testing data class")
     
-
-    # categories = [
-    #     'edible',
-    #     'poisonous',
-    # ]
-    # remove = ('headers', 'footers', 'quotes')
-    # data_train = fetch_20newsgroups(subset='train', categories=categories,
-    #                             shuffle=True, random_state=42,
-    #                             remove=remove)
-
-    # data_test = fetch_20newsgroups(subset='test', categories=categories,
-    #                            shuffle=True, random_state=42,
-    #                            remove=remove)
 
 
     data = MushroomData()
@@ -46,7 +33,8 @@ if __name__ == "__main__":
     
     print('missing elements')
 
-    clf = GaussianNB()
+    # target = y_test.target
+    clf = svm.SVC()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
 
@@ -54,8 +42,8 @@ if __name__ == "__main__":
     print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
     print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
     print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
-    print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
 
+    print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
 
 
     data = MushroomData()
@@ -63,7 +51,8 @@ if __name__ == "__main__":
     
     print('\nAll Elements')
 
-    clf = GaussianNB()
+    # target = y_test.target
+    clf = svm.SVC()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
 
@@ -71,7 +60,6 @@ if __name__ == "__main__":
     print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
     print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
     print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
-
-    
  
     print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
+    
