@@ -19,6 +19,8 @@ import os
 from sklearn import svm
 from sklearn.datasets import fetch_20newsgroups
 from MushroomData import MushroomData
+from sklearn.metrics import precision_recall_fscore_support
+
 
 
 if __name__ == "__main__":
@@ -35,17 +37,29 @@ if __name__ == "__main__":
     clf = svm.SVC()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
+
+    y_true = np.array(y_test)
+    print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
+
     print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
 
 
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False)
     
-    print('All Elements')
+    print('\nAll Elements')
 
     # target = y_test.target
     clf = svm.SVC()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
+
+    y_true = np.array(y_test)
+    print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
  
     print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
+    
