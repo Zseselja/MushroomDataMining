@@ -19,7 +19,7 @@ from sklearn import metrics
 if __name__ == "__main__":
 
     # Decision Tree: (with missing elements)
-    print('Decision Tree: (with missing elements)')
+    print('Decision Tree: (eliminating missing elements)')
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
     clf = tree.DecisionTreeClassifier(criterion='entropy')
@@ -29,7 +29,6 @@ if __name__ == "__main__":
     # Metrics
     y_true = np.array(y_test)
     print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction) == 0))
-    print
     print(metrics.classification_report(y_true, y_prediction, target_names=data.class_labels, digits=6))
 
     # Feature Importances 
@@ -55,7 +54,6 @@ if __name__ == "__main__":
     # Metrics
     y_true = np.array(y_test)
     print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
-    print
     print(metrics.classification_report(y_true, y_prediction, target_names=data.class_labels, digits=6))
 
     # Feature Importances
