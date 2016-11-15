@@ -100,6 +100,30 @@ class MushroomData:
     #                              urban=u,waste=w,woods=d
     _habitat_dict = {'g':1,'l':2,'m':3,'p':4,'u':5,'w':6,'d':7}
 
+    #Mapping feature names to input data array index
+    _feature_indices = {'cap-shape':1,
+                        'cap-surface':2,
+                        'cap-color':3,
+                        'bruises?':4,
+                        'odor':5,
+                        'gill-attachment':6,
+                        'gill-spacing':7,
+                        'gill-size':8,
+                        'gill-color':9,
+                        'stalk-shape':10,
+                        'stalk-root':11,
+                        'stalk-surface-above-ring':12,
+                        'stalk-surface-below-ring':13,
+                        'stalk-color-above-ring':14,
+                        'stalk-color-below-ring':15,
+                        'veil-type':16,
+                        'veil-color':17,
+                        'ring-number':18,
+                        'ring-type':19,
+                        'spore-print-color':20,
+                        'population':21,
+                        'habitat':22 }
+
     _dict_seq = [_cap_shape_dict,_cap_surface_dict,_cap_color_dict,_bruises_dict,_odor_dict,
                  _gill_attach_dict,_gill_space_dict,_gill_size_dict,_gill_color_dict,_stalk_shape_dict,
                  _stalk_root_dict,_stalk_surf_ring_dict,_stalk_surf_ring_dict,_stalk_color_ring_dict,_stalk_color_ring_dict,
@@ -132,10 +156,13 @@ class MushroomData:
 
     #Get the datasets from the csv file
     #   returns list of classes y, and attribute matrix X
-    def get_datasets(self, eliminate_missing=True):
+    def get_datasets(self, eliminate_missing=True, ignore=[]):
         #open and read the data file
         self.y = []
         self.X = []
+        ignore_inds = [self._feature_indices[f] 
+                        for f in ignore
+                        if f in self._feature_indices]
         with open(self.data_file) as f:
             for line in f:
                 m = line.strip().split(',')
@@ -143,9 +170,11 @@ class MushroomData:
                 y_ans = self._class_dict[m[0]]
                 self.y.append(y_ans)
                 #other columns are the attributes
-                if m[11] is not '?':
+                if m[11] is not '?' or 11 in ignore_inds:
                     #only attr 11 "stalk-root" can be unknown, handle it separately
-                    x_i = [self._dict_seq[i-1][m[i]] for i in range(1,len(m))]
+                    x_i = [self._dict_seq[i-1][m[i]] 
+                            for i in range(1,len(m))
+                            if i not in ignore_inds]
                     self.X.append(x_i)
                 elif eliminate_missing is True:
                     #attribute 11 is missing eliminate this object
