@@ -194,6 +194,11 @@ class MushroomData:
                         self.X.append(x_i)
                         self.y.append(y_ans)
         return self._get_samples(self.y,self.X)
+    
+    def feat_counts(self):
+        counts = [len(dic) for dic in self._dict_seq]
+        return counts
+        
 
 
 
