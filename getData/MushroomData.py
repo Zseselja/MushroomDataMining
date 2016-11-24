@@ -184,6 +184,7 @@ class MushroomData:
                     self.X.append(x_i)
                 elif eliminate_missing is True:
                     #attribute 11 is missing eliminate this object
+                    
                     pass
                 else:
                     #pad data with all possible combinations of attr 11
