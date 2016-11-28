@@ -1,6 +1,5 @@
 #!/usr/bin/python
-
-# LinearSVC
+# GaussianNB
 #MushroomData.py
 #
 #SENG474 Project
@@ -17,7 +16,7 @@
 import numpy as np
 import sys
 import os
-from sklearn.svm  import LinearSVC
+from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import fetch_20newsgroups
 from MushroomData import MushroomData
 import matplotlib.pyplot as plt
@@ -30,7 +29,24 @@ from sklearn.metrics import precision_recall_fscore_support
 
 
 
+
+
 def main():
+
+
+    # categories = [
+    #     'edible',
+    #     'poisonous',
+    # ]
+    # remove = ('headers', 'footers', 'quotes')
+    # data_train = fetch_20newsgroups(subset='train', categories=categories,
+    #                             shuffle=True, random_state=42,
+    #                             remove=remove)
+
+    # data_test = fetch_20newsgroups(subset='test', categories=categories,
+    #                            shuffle=True, random_state=42,
+    #                            remove=remove)
+
 
     data = MushroomData()
 
@@ -40,10 +56,9 @@ def main():
     
     print('missing elements')
 
-    clf = LinearSVC()
+    clf = GaussianNB()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
-
 
 
     y_true = np.array(y_test)
@@ -59,7 +74,7 @@ def main():
     
     print('\nAll Elements')
 
-    clf = LinearSVC()
+    clf = GaussianNB()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
 
@@ -73,6 +88,23 @@ def main():
  
     print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
 
+
+    print('\nIgnore stalk-root')
+    data = MushroomData()
+    y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False, ignore=['stalk-root'])
+
+    clf = GaussianNB()
+    clf.fit(X_train,y_train)
+    y_prediction = clf.predict(X_test)
+
+    y_true = np.array(y_test)
+    print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
+
+    
+ 
+    print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
 
 if __name__ == "__main__":
     main()
