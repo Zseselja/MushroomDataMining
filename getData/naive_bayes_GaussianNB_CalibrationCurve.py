@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# SVM.py
+# naive_bayes_GaussianNB.py
 #
 #SENG474 Project
 #Group: Alix Voorthuyzen, 
@@ -13,17 +13,16 @@
 import numpy as np
 import sys
 import os
-from sklearn import svm
-from sklearn.datasets import fetch_20newsgroups
-from MushroomData import MushroomData
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import fetch_20newsgroups
 from MushroomData import MushroomData
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (brier_score_loss, precision_score, recall_score,
                              f1_score)
+#from sklearn.model_selection import train_test_split
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+from sklearn.metrics import precision_recall_fscore_support
 from sklearn import metrics
 
 
@@ -83,48 +82,93 @@ def plot_calibration_curve(est, name, fig_index, y_test,X_test,y_train,X_train):
 
     plt.tight_layout()
 
+# Plot calibration curve for Gaussian Naive Bayes
+# plot_calibration_curve(GaussianNB(), "Naive Bayes", 1 , y_test,X_test,y_train,X_train)
+
+# Plot calibration curve for Linear SVC
+# plot_calibration_curve(LinearSVC(), "SVC", 2 ,  y_test,X_test,y_train,X_train)
+
+
+
 def main():
-    
-    # SVM: (eliminating missing elements)
-    print('\nSVM: (eliminating missing elements)')
+
+
+    # categories = [
+    #     'edible',
+    #     'poisonous',
+    # ]
+    # remove = ('headers', 'footers', 'quotes')
+    # data_train = fetch_20newsgroups(subset='train', categories=categories,
+    #                             shuffle=True, random_state=42,
+    #                             remove=remove)
+
+    # data_test = fetch_20newsgroups(subset='test', categories=categories,
+    #                            shuffle=True, random_state=42,
+    #                            remove=remove)
+
+    # Gaussuan Naive Bayes: (eliminating missing elements)
+    print('Gaussuan Naive Bayes: (eliminating missing elements)')
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
-
-    # target = y_test.target
-    clf = svm.SVC()
+    clf = GaussianNB()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
 
     # Calibration Curve Plot 
-    plot_calibration_curve(clf , 'SVM', 1 ,  y_test, X_test,y_train,X_train)
+    plot_calibration_curve(clf , 'NAIVE BAYES', 1 ,  y_test, X_test,y_train,X_train)
     plt.show()
 
     # Metrics
     y_true = np.array(y_test)
+    #print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    #print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    #print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
     print 'accuracy = %f' %( np.mean((list(y_test)-y_prediction)==0))
     print(metrics.classification_report(y_true, y_prediction, target_names=data.class_labels, digits=6))
 
-    # SVM: (using all elements))
-    print('\nSVM: (using all elements)')
+    # Gaussuan Naive Bayes: (using all elements)
+    print('\nGaussuan Naive Bayes: (using all elements)')
     data = MushroomData()
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False)
 
-    # target = y_test.target
-    clf = svm.SVC()
+    clf = GaussianNB()
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
 
     # Calibration Curve Plot 
-    plot_calibration_curve(clf , 'SVM', 1 ,  y_test, X_test,y_train,X_train)
+    plot_calibration_curve(clf , 'NAIVE BAYES', 1 ,  y_test, X_test,y_train,X_train)
     plt.show()
-    
+
     # Metrics
     y_true = np.array(y_test)
+    #print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    #print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    #print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
     print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
     print(metrics.classification_report(y_true, y_prediction, target_names=data.class_labels, digits=6))
+
+
+    print('\nIgnore stalk-root')
+    data = MushroomData()
+    y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False, ignore=['stalk-root'])
+
+    clf = GaussianNB()
+    clf.fit(X_train,y_train)
+    y_prediction = clf.predict(X_test)
+
+# Forming plot 
+    plot_calibration_curve(clf , 'NAIVE BAYES', 1 ,  y_test, X_test,y_train,X_train)
+    plt.show()
+
+    y_true = np.array(y_test)
+    print "macro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='macro'))+ "\n"
+    print "micro precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='micro'))+ "\n"
+    print "weighted precision , recall , fscore = " + str(precision_recall_fscore_support(y_true, y_prediction, average='weighted'))+ "\n"
+
     
-    pass
+ 
+    print 'accuracy = %f' %( np.mean(( list(y_test)-y_prediction)==0))
 
 if __name__ == "__main__":
     main()
-    
+     
