@@ -174,7 +174,6 @@ class MushroomData:
                 m = line.strip().split(',')
                 #first column is the classes: poisonous or edible
                 y_ans = self._class_dict[m[0]]
-                self.y.append(y_ans)
                 #other columns are the attributes
                 if m[11] is not '?' or 11 in ignore_inds:
                     #only attr 11 "stalk-root" can be unknown, handle it separately
@@ -182,6 +181,7 @@ class MushroomData:
                             for i in range(1,len(m))
                             if i not in ignore_inds]
                     self.X.append(x_i)
+                    self.y.append(y_ans)
                 elif eliminate_missing is True:
                     #attribute 11 is missing eliminate this object
                     
