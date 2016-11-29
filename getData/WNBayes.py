@@ -53,32 +53,31 @@ def fit(X, y):
     for i in range(len(edible_probs)):
         for j in range(1, feat_counts[i]+1):
             if j in edible_probs[i]:
-                edible_probs[i][j] += 1
+                edible_probs[i][j] += 1.0
                 edible_probs[i][j] /= (e_count + feat_counts[i])
             else:
-                edible_probs[i][j] = 1.0 / e_count + feat_counts[i]
+                edible_probs[i][j] = 1.0 / (e_count + feat_counts[i])
                 
     for i in range(len(inedible_probs)):
         for j in range(1, feat_counts[i]+1):
             if j in inedible_probs[i]:
-                inedible_probs[i][j] += 1
-                inedible_probs[i][j] /= (e_count + feat_counts[i])
+                inedible_probs[i][j] += 1.0
+                inedible_probs[i][j] /= ((total-e_count) + feat_counts[i])
             else:
-                inedible_probs[i][j] = 1.0 / e_count + feat_counts[i]
+                inedible_probs[i][j] = 1.0 / ((total-e_count) + feat_counts[i])
     
                 
     
 def predict(X,w):
     y = np.zeros(len(X))
     for i in range(len(X)):
-        p_edible = 0
-        p_inedible = 0
+        p_edible = 0.0
+        p_inedible = 0.0
         for j in range(len(X[i])):
             if X[i][j] in edible_probs[j]:
                 p_edible += w[j] * np.log(edible_probs[j][X[i][j]])
             if X[i][j] in inedible_probs[j]:
                 p_inedible += w[j] * np.log(inedible_probs[j][X[i][j]])
-        
         if p_edible > p_inedible:
             y[i] = 1
         else:
@@ -93,17 +92,16 @@ print '*** Equal weights ***'
 weights = [1.0 for i in range(22)]
 y_pred = predict(X_test, weights)
 print 'accuracy = %f' %( np.mean((list(y_test)-y_pred)==0))
-print(metrics.classification_report(y_test, y_pred, target_names=data.class_labels, digits=6))
+print(metrics.classification_report(y_test, y_pred, labels=[1,-1], target_names=data.class_labels, digits=6))
 
 
 print '*** Weight using decision tree depth = 3***'
 print 'Tree depth 3'
-clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=5)
+clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=3)
 clf.fit(X_train,y_train)
-
 y_pred = predict(X_test, clf.feature_importances_)
 print 'accuracy = %f' %( np.mean((list(y_test)-y_pred)==0))
-print(metrics.classification_report(y_test, y_pred, target_names=data.class_labels, digits=6))
+print(metrics.classification_report(y_test, y_pred, labels=[1,-1], target_names=data.class_labels, digits=6))
 
 
 print '*** Missing record not eliminated***'
@@ -114,17 +112,17 @@ print '*** Equal weights ***'
 weights = [1.0 for i in range(22)]
 y_pred = predict(X_test, weights)
 print 'accuracy = %f' %( np.mean((list(y_test)-y_pred)==0))
-print(metrics.classification_report(y_test, y_pred, target_names=data.class_labels, digits=6))
+print(metrics.classification_report(y_test, y_pred, labels=[1,-1], target_names=data.class_labels, digits=6))
 
 
 print '*** Weight using decision tree depth = 3***'
 print 'Tree depth 3'
-clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=5)
+clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=3)
 clf.fit(X_train,y_train)
 
 y_pred = predict(X_test, clf.feature_importances_)
 print 'accuracy = %f' %( np.mean((list(y_test)-y_pred)==0))
-print(metrics.classification_report(y_test, y_pred, target_names=data.class_labels, digits=6))
+print(metrics.classification_report(y_test, y_pred, labels=[1,-1], target_names=data.class_labels, digits=6))
 
 
 print '*** Missing attribute ignored***'
@@ -135,15 +133,15 @@ print '*** Equal weights ***'
 weights = [1.0 for i in range(22)]
 y_pred = predict(X_test, weights)
 print 'accuracy = %f' %( np.mean((list(y_test)-y_pred)==0))
-print(metrics.classification_report(y_test, y_pred, target_names=data.class_labels, digits=6))
+print(metrics.classification_report(y_test, y_pred, labels=[1,-1], target_names=data.class_labels, digits=6))
 
 
 print '*** Weight using decision tree depth = 3***'
 print 'Tree depth 3'
-clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=5)
+clf = tree.DecisionTreeClassifier(criterion='entropy', max_depth=3)
 clf.fit(X_train,y_train)
 
 y_pred = predict(X_test, clf.feature_importances_)
 print 'accuracy = %f' %( np.mean((list(y_test)-y_pred)==0))
-print(metrics.classification_report(y_test, y_pred, target_names=data.class_labels, digits=6))
+print(metrics.classification_report(y_test, y_pred, labels=[1,-1], target_names=data.class_labels, digits=6))
 
