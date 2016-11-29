@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-#Demo.py
+#MushroomData.py
+#
 #SENG474 Project
 #Group: Alix Voorthuyzen, 
 #       Alice Gibbons, 
@@ -8,16 +9,15 @@
 #       Matthew Clarkson, 
 #       Zachary Seselja
 #
-#Purpose: Classify whether a mushroom is poisonous or not
-
-import numpy as np 
-from sys import stdin
+#Purpose: Get the mushroom data, transform it into a format usable by
+#           the data mining algorithms, split into training and test sets,
+#           and process results.
+#
+import numpy as np
+import sys
 import os
-from sklearn.svm  import LinearSVC
-from sklearn.datasets import fetch_20newsgroups
-from MushroomData import MushroomData
 
-class MushroomDataDemo:
+class MushroomData:
     #file name of raw data
     data_file = ''
 
@@ -140,59 +140,80 @@ class MushroomDataDemo:
                             'veil-color', 'ring-number', 'ring-type', 'spore-print-color', 'population', 'habitat']
         self.y = []
         self.X = []
-    def convert(self , data):
-    	self.y = []
+
+
+    #Given a list of classes (y) and associated attributes (X)
+    #   return randomly sampled test and training datasets
+    @staticmethod
+    def _get_samples(y,X):
+        #pair ys and Xs to preserve matching
+        d = zip(y,X)
+        #shuffle to get a random sample
+        np.random.shuffle(d)
+        t_count = len(d)/10
+
+        #split and transpose into y_test and X_test
+        test = zip(*d[:t_count])
+
+        #split and transpose into y_train and X_train
+        train = zip(*d[t_count:])
+
+        return test[0],test[1],train[0],train[1]
+
+    #Get the datasets from the csv file
+    #   returns list of classes y, and attribute matrix X
+    def get_datasets(self, eliminate_missing=True, ignore=[]):
+        #open and read the data file
+        self.y = []
         self.X = []
-        print data
-
-    	m = data.strip().split(',')
-        #first column is the classes: poisonous or edible
-        y_ans = self._class_dict[m[0]]
-        #other columns are the attributes
-        # if m[11] is not '?' or 11 in ignore_inds:
-        #     #only attr 11 "stalk-root" can be unknown, handle it separately
-        x_i = [self._dict_seq[i-1][m[i]] 
-                for i in range(1,len(m))]
-               
-        self.X.append(x_i)
-        self.y.append(y_ans)
+        ignore_inds = [self._feature_indices[f] 
+                        for f in ignore
+                        if f in self._feature_indices]
+        with open(self.data_file) as f:
+            for line in f:
+                m = line.strip().split(',')
+                #first column is the classes: poisonous or edible
+                y_ans = self._class_dict[m[0]]
+                #other columns are the attributes
+                if m[11] is not '?' or 11 in ignore_inds:
+                    #only attr 11 "stalk-root" can be unknown, handle it separately
+                    x_i = [self._dict_seq[i-1][m[i]] 
+                            for i in range(1,len(m))
+                            if i not in ignore_inds]
+                    self.X.append(x_i)
+                    self.y.append(y_ans)
+                elif eliminate_missing is True:
+                    #attribute 11 is missing eliminate this object
+                    
+                    pass
+                else:
+                    #pad data with all possible combinations of attr 11
+                    for key,val in self._dict_seq[10].iteritems():
+                        x_i = [self._dict_seq[i-1][m[i]] 
+                                if i is not 11 else val
+                                for i in range(1,len(m))]
+                        self.X.append(x_i)
+                        self.y.append(y_ans)
+        return self._get_samples(self.y,self.X)
+    
+    def feat_counts(self):
+        counts = [len(dic) for dic in self._dict_seq]
+        return counts
         
-        # print m
-        return m
 
-    	# pass
-def main():
-	data = MushroomData()
- 	ourTest = MushroomDataDemo()
-	y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
 
-	clf = LinearSVC()
-	clf.fit(X_train,y_train)
-
-	input = stdin.read()
-	print input
-	# del classifiers[0]
-	print classifiers
-	string = ''
-	for x in classifiers:
-		string += str(x)
-		pass
-	test = string
-	print test
-
-	# print test
-	test = ourTest.convert(test)
-	# print test
-	print ourTest.X
-	print ourTest.y
-	np.array(test)
-	 # X.reshape(1, -1)
-	y_prediction = clf.predict(ourTest.X)
-	print "Our Prediction = ",
-	if y_prediction[0] == 1:
-		print "Edible"
-	else:
-		print "Poisonous"
 
 if __name__ == "__main__":
-    main()
+    print("testing data class")
+    
+    data = MushroomData()
+    y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
+    assert(len(y_test) + len(y_train) == len(X_test) + len(X_train))
+    assert(len(y_test) + len(y_train) == (8124 - 2480))
+    print('Eliminate missing True OK')
+
+    data = MushroomData()
+    y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=False)
+    assert(len(y_test) + len(y_train) == len(X_test) + len(X_train))
+    assert(len(y_test) + len(y_train) == (8124 + 5*2480))
+    print('Eliminate missing False OK')

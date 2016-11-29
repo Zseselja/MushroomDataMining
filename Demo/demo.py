@@ -143,7 +143,7 @@ class MushroomDataDemo:
     def convert(self , data):
     	self.y = []
         self.X = []
-        print data
+        # print data
 
     	m = data.strip().split(',')
         #first column is the classes: poisonous or edible
@@ -169,10 +169,10 @@ def main():
 	clf = LinearSVC()
 	clf.fit(X_train,y_train)
 
-	input = stdin.read()
-	print input
+	classifiers = stdin.read()
+	# print input
 	# del classifiers[0]
-	print classifiers
+	# print classifiers
 	string = ''
 	for x in classifiers:
 		string += str(x)
@@ -183,7 +183,7 @@ def main():
 	# print test
 	test = ourTest.convert(test)
 	# print test
-	print ourTest.X
+	# print ourTest.X
 	print ourTest.y
 	np.array(test)
 	 # X.reshape(1, -1)
