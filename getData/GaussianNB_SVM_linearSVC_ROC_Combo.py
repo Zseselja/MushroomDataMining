@@ -75,13 +75,7 @@ def main():
     clfList = [clf1,clf2,clf3]
     scoreList = [ "GaussianNB" , "SVM" , "linearSVC"]
     
-    random_state = np.random.RandomState(0)
-    n_samples, n_features = X.shape
-   
-    # Add noisy features to make the problem harder
-    random_state = np.random.RandomState(0)
-    n_samples, n_features = X.shape
-    # X = np.c_[X, random_state.randn(n_samples, 200 * n_features)]
+    
 
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.5,random_state=0)
 
@@ -137,12 +131,6 @@ def main():
     scoreList.extend([ "GaussianNB" , "SVM" , "linearSVC"])
     
     
-    random_state = np.random.RandomState(0)
-    n_samples, n_features = X.shape
-   
-    # Add noisy features to make the problem harder
-    random_state = np.random.RandomState(0)
-    n_samples, n_features = X.shape
     count  = 0
     for clf  in clfList:
         clf.fit(X_train,y_train)
@@ -184,13 +172,7 @@ def main():
     clf3 = LinearSVC()
     clfList = [clf1,clf2,clf3]
     scoreList.extend([ "GaussianNB" , "SVM" , "linearSVC"])
-    
-    random_state = np.random.RandomState(0)
-    n_samples, n_features = X.shape
    
-    # Add noisy features to make the problem harder
-    random_state = np.random.RandomState(0)
-    n_samples, n_features = X.shape
     count  = 0
     for clf  in clfList:
         clf.fit(X_train,y_train)

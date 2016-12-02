@@ -36,7 +36,7 @@ def main():
     y_test,X_test,y_train,X_train = data.get_datasets(eliminate_missing=True)
 
     # target = y_test.target
-    clf = svm.SVC()
+    clf = svm.SVC(C=.01)
     clf.fit(X_train,y_train)
     y_prediction = clf.predict(X_test)
 
